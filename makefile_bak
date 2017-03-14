@@ -1,0 +1,31 @@
+BIN = sweet_deamon
+CXX = g++ 
+
+WORK_DIR = sweet_daemon
+TARGET_DIR = ./bin
+OBJ_DIR = ./obj
+CPPFLAGS = -c -g -rdynamic -m64
+CFLAGS = -lpthread -ldl -lrt -m64
+INCLUDE = -I./sweet_daemon -I./sweet_daemon/common/include -I./sweet_daemon/common/tinyxml
+#LIBRARY = -lpthread -lrt
+
+$(shell mkdir -p ${TARGET_DIR})
+$(shell mkdir -p ${OBJ_DIR})
+RM = rm -rf 
+
+OBJECTS = common/CfgFromXml.o \
+		swt_common_func.o swt_log.o swt_process.o swt_setproctitle.o swt_string.o \
+		swt_main.o
+
+all: ${BIN}
+
+${BIN}: ${OBJECTS}
+	${CXX} -g ${OBJECTS} -o $@ ${CFLAGS}
+
+${OBJECTS}:%.o:%.cpp
+	@echo "Compiling $<"
+	@${CXX} ${CPPFLAGS} ${INCLUDE} $< -o $@
+
+.PHONY: clean
+clean:
+	-${RM} ${OBJ_DIR}
