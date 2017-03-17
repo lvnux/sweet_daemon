@@ -1,5 +1,5 @@
 GCC = g++
-TARGET = sweet_deamon
+TARGET = sweet_daemon
 
 
 ### route setting
@@ -52,14 +52,13 @@ $(TARGET_DIR)/$(TARGET):$(OBJ)
 
 ### generated object file
 
-$(OBJ_DIR)/%.o:$(PUB_DIR)/common/%.cpp
+$(OBJ_DIR)/%.o:$(SOURCE_DIR)/common/%.cpp
 	$(GCC) $(CFLAGS) -c  $< -o $@ $(INC)
-$(OBJ_DIR)/%.o:$(PUB_DIR)/common/include/%.cpp
+$(OBJ_DIR)/%.o:$(SOURCE_DIR)/common/include/%.cpp
 	$(GCC) $(CFLAGS) -c  $< -o $@ $(INC)
-$(OBJ_DIR)/%.o:$(PUB_DIR)/common/include/%.cpp
+$(OBJ_DIR)/%.o:$(SOURCE_DIR)/common/tinyxml/%.cpp
 	$(GCC) $(CFLAGS) -c  $< -o $@ $(INC)
-
-$(OBJ_DIR)/%.o:$(SMSP_DIR)/%.cpp
+$(OBJ_DIR)/%.o:$(SOURCE_DIR)/%.cpp
 	$(GCC) $(CFLAGS) -c  $< -o $@ $(INC)
 
 

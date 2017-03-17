@@ -1,4 +1,4 @@
-#include "Log.h"
+#include "swt_log.h"
 
 #include <time.h>
 #include <stdarg.h>

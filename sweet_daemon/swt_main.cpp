@@ -5,6 +5,7 @@
 #include <sys/stat.h>
 #include <string>
 
+#include "swt_main.h"
 #include "swt_string.h"
 #include "swt_setproctitle.h"
 
