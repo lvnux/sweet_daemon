@@ -106,7 +106,6 @@ private:
 	CThreadMutex m_lock;
 
 };
-#endif
 
 class CMutexGuard
 {
@@ -152,4 +151,4 @@ public:
 	}
 };
 
-#endif
+#endif    //__LOCK_H__

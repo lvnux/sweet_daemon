@@ -1,84 +1,5 @@
-#include <stdio.h>
-#include <unistd.h>
-#include <stdlib.h>
-#include <fcntl.h>
-#include <sys/stat.h>
-#include <string>
-
 #include "swt_main.h"
-#include "swt_string.h"
-#include "swt_setproctitle.h"
-
-static pid_t master_pid;
-static pid_t sub_pid;
-
-static int option_show_help = 0;
-static int option_show_version = 0;
-static int option_in_swt = 0;
-static int option_start_work = 0;
-
-
-int              swt_argc;
-char           **swt_argv; 
-char           **swt_os_argv;
-
-
-static swt_int_t swt_save_argv(int argc, char *const *argv);
-static swt_int_t swt_get_options(int argc, char *const *argv);
-static inline void swt_show_version();
-static inline void swt_show_help();
-static swt_int_t swt_daemon();
-
-
-
-void start_work(const char* filename, long i)
-{
-	if (access(filename, 0) != -1)
-	{
-		remove(filename);
-	}
-
-	FILE* pFile = fopen(filename, "a+");
-
-	//int i = 0;
-	while (true)
-	{
-		fprintf(pFile, "test i = %d\n", i);
-		fflush(pFile);
-		//++i;
-		sleep(2);
-	}
-
-	if (NULL != pFile)
-	{
-		fclose(pFile);
-		pFile = NULL;
-	}
-}
-
-void start_process()
-{
-	switch (fork()) {
-    case -1:
-        printf("fork() failed\n");
-        return;
-
-    case 0:
-		{
-        	sub_pid = getpid();
-			printf("sub pid: %ld\n", (long)sub_pid);
-			swt_setproctitle("sub swt process");
-			start_work("sub_process", sub_pid);
-			break;
-		}
-    default:
-		{
-			swt_setproctitle("test_swt process");
-			start_work("master_process", master_pid);
-        	break;
-    	}
-    }
-}
+#include "swt_conf_file.h"
 
 
 int main(int argc, char** argv)
@@ -86,16 +7,11 @@ int main(int argc, char** argv)
 	if (SWT_SUCCESS != swt_get_options(argc, argv))
 		return SWT_FAILURE;
 
+	CSwtConfFile swtConfFile;
+	swtConfFile.IintConfFile(swt_conf_file);
+	
 	swt_save_argv(argc, argv);
 	swt_init_setproctitle();
-	
-    if (1 == argc)
-    {
-        printf("start direct\n");
-		swt_setproctitle("test_swt process");
-		start_work("single_pattern", 0);
-        return 0;
-    }
 	
 	master_pid = getpid();
 
@@ -109,7 +25,7 @@ int main(int argc, char** argv)
 		swt_show_version();
 	}
 
-	if (option_start_work && option_in_swt)
+	if (option_start_work)
 	{
     	swt_daemon();
 		start_process();
@@ -122,7 +38,7 @@ int main(int argc, char** argv)
 static swt_int_t swt_get_options(int argc, char *const *argv)
 {
 	int oc;
-    while ((oc = getopt(argc, argv, ":dhvs:")) != -1)
+    while ((oc = getopt(argc, argv, ":dhvc:s:")) != -1)
     {
         switch (oc)
         {
@@ -131,13 +47,6 @@ static swt_int_t swt_get_options(int argc, char *const *argv)
 				option_show_help = 1;
 				break;
 			}
-            case 'd':
-            {
-                printf("start in swt\n");
-				option_in_swt = 1;
-				option_start_work = 1;
-                break;
-            }
             case 'v':
             {
                 option_show_version = 1;
@@ -146,6 +55,13 @@ static swt_int_t swt_get_options(int argc, char *const *argv)
             case 's':
             {
                 printf("param is: %s\n", optarg);
+                break;
+            }
+			case 'c':
+            {
+                printf("param is: %s\n", optarg);
+				swt_conf_file = optarg;
+				option_start_work = 1;
                 break;
             }
             case '?':
@@ -182,7 +98,8 @@ static inline void swt_show_help()
         "  -d            : start worker in daemon" SWT_LINEFEED
         "  -s signal     : send signal to a master process: " SWT_LINEFEED
         "                  stop, quit, reopen, reload" SWT_LINEFEED
-        "  -c filename   : set configuration file (default: xxxxx.conf)" SWT_LINEFEED
+        "  -c filename   : set configuration file (default: "
+                                   SWT_CONF_PATH ")" SWT_LINEFEED
 	);
 }
 

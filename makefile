@@ -65,6 +65,6 @@ $(OBJ_DIR)/%.o:$(SOURCE_DIR)/%.cpp
 ### remove object
 .PHONY : clean
 clean :
-	$(RM) $(OBJ_DIR)
+	-$(RM) $(OBJ_DIR) $(TARGET_DIR)
 
 

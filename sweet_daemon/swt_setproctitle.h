@@ -1,13 +1,12 @@
 #ifndef __SWT_SETPROCTITLE_H__
 #define __SWT_SETPROCTITLE_H__
 
-#include "swt_types.h"
+#include "swt_string.h"
 
-#define NGX_SETPROCTITLE_USES_ENV  1
-#define NGX_SETPROCTITLE_PAD       '\0'
+#define SWT_SETPROCTITLE_PAD       '\0'
 
 int swt_init_setproctitle();
-void swt_setproctitle(const char *title);
+void swt_setproctitle(const u_char *title);
 
 
 #endif //__SWT_SETPROCTITLE_H__

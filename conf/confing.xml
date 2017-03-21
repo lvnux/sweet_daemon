@@ -1,0 +1,17 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+
+<config>
+    <!--日期配置-->
+    <sys>
+        <workmode>DEBUG</workmode>
+        <log-level>DEBUG</log-level><!--DEBUG:调试级别 INFO:一般调试信息 ERROR:错误级别 -->
+    </sys>
+
+    <!--终端服务配置-->
+    <redis_list>
+        <ip>127.0.0.1</ip><!--REDIS地址-->
+        <port>6379</port><!--REDIS端口-->
+        <dbindex>0</dbindex><!--REDIS DB号-->
+    </redis_list>
+</config>
+

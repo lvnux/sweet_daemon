@@ -4,7 +4,9 @@
 #include <stdarg.h>
 #include <sys/stat.h>
 #include <sys/types.h>
-
+#include <strings.h>
+#include <unistd.h>
+#include "general.h"
 
 CLog g_log;
 
@@ -21,18 +23,18 @@ CLog::~CLog(void)
 
 void CLog::InitParam(const char* loglevel, const char* pszName)
 {
-	getcwd(m_szFileName, MAX_PATH);
+	get_cur_directory(m_szFileName, MAX_PATH);
 
 	strcat(m_szFileName, "/log/");
 	mkdir(m_szFileName, S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
 
 	strcat(m_szFileName, pszName);
 	m_hlog = NULL;
-	if(stricmp(loglevel, "DEBUG") == 0)
+	if(strcasecmp(loglevel, "DEBUG") == 0)
 		m_nLevel = 0;
-	else if(stricmp(loglevel, "INFO") == 0)
+	else if(strcasecmp(loglevel, "INFO") == 0)
 		m_nLevel = 1;
-	else if(stricmp(loglevel, "ERROR") == 0)
+	else if(strcasecmp(loglevel, "ERROR") == 0)
 		m_nLevel = 2;
 	else
 		m_nLevel = -1;
@@ -59,8 +61,7 @@ bool CLog::CreateLogFile()
 		char szFileName[MAX_PATH] = {0};
 		sprintf(szFileName, "%s%s.log", m_szFileName, m_curday);
 
-		int ret = check_file_exists(m_szFileName);
-		if(0 == ret)
+		if(check_file_exists(m_szFileName))
 			return true;
 
 		if((m_hlog = fopen(szFileName, "a+"))==NULL)
@@ -120,7 +121,7 @@ void CLog::WriteLog(int nLevel, const char *format, ...)
 	m_csWrite.release();
 }
 
-void CLog::WriteWinHex(const char* pszFlag, const BYTE* pbyLogData, int nLogLen)
+void CLog::WriteWinHex(const char* pszFlag, const Byte* pbyLogData, int nLogLen)
 {
 	if(m_nLevel >= 2 || nLogLen > 2048 || nLogLen <= 0)
 		return;

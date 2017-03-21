@@ -37,12 +37,7 @@ bool CCfgFromXml::LoadPwdXml(const char* pszXmlFile)
 	//¼ÓÔØÅäÖÃÎÄ¼þ
 	char szPath[260] = {0};
 	get_cur_directory(szPath, 260);
-
-#ifdef ON_PLATFORM_WINDOWS
-	strcat(szPath, "\\");
-#else
 	strcat(szPath, "/");
-#endif
 	strcat(szPath, pszXmlFile);
 
 	m_pDocument = new TiXmlDocument(pszXmlFile);
@@ -71,7 +66,6 @@ bool CCfgFromXml::MoveToElement(const char* pszKey)
 		return false;
 
 	TiXmlNode* pNode  = NULL;
-	TiXmlNode* pSelectNode = NULL;
 
 	for(pNode = m_pCurElement->FirstChildElement(); pNode != NULL ; pNode = pNode->NextSiblingElement())  
 	{
@@ -108,13 +102,13 @@ bool CCfgFromXml::GetAttrValue(const char* pszKey, const char* pszAttr, std::str
 
 	for( ; pNode != NULL; pNode = pNode->NextSiblingElement())
 	{
-		if(stricmp(pNode->Value(), pszKey) != 0)
+		if(strcasecmp(pNode->Value(), pszKey) != 0)
 			continue;
 
 		TiXmlAttribute* pAttr = pNode->ToElement()->FirstAttribute();
 		for( ; pAttr != NULL; pAttr = pAttr->Next())
 		{
-			if(stricmp(pAttr->Name(), pszAttr) != 0)
+			if(strcasecmp(pAttr->Name(), pszAttr) != 0)
 				continue;
 
 			strValue = pAttr->Value();
@@ -142,7 +136,7 @@ bool CCfgFromXml::GetTextValue(const char* pszKey, std::string& strValue)
 		TiXmlNode* pNode = m_pCurNode->FirstChildElement();
 		for( ; pNode != NULL; pNode = pNode->NextSiblingElement())
 		{
-			if(stricmp(pNode->Value(), pszKey) != 0)
+			if(strcasecmp(pNode->Value(), pszKey) != 0)
 				continue;
 
 			TiXmlNode* pTmp = pNode->FirstChild();

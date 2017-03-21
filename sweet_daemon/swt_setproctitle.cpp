@@ -1,4 +1,6 @@
 #include "swt_setproctitle.h"
+#include <string.h>
+#include <stdlib.h>
 
 extern char **environ;
 extern char **swt_argv; 
@@ -50,20 +52,20 @@ int swt_init_setproctitle()
 
 //Linux修改进程名称(setproctitle()) .
 void
-swt_setproctitle(const char *title)
+swt_setproctitle(const u_char *title)
 {
     u_char     *p;
 
 
     swt_os_argv[1] = NULL;
 
-    p = swt_cpystrn((u_char *) swt_os_argv[0], (u_char *) "swt: ",
+    p = swt_cpystrn((u_char *) swt_os_argv[0], (u_char *) "sweet: ",
                     swt_os_argv_last - swt_os_argv[0]);
 
     p = swt_cpystrn(p, (u_char *) title, swt_os_argv_last - (char *) p);
 
     if (swt_os_argv_last - (char *) p) {
-        memset(p, NGX_SETPROCTITLE_PAD, swt_os_argv_last - (char *) p);
+        memset(p, SWT_SETPROCTITLE_PAD, swt_os_argv_last - (char *) p);
     }
 }
 

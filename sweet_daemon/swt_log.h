@@ -2,6 +2,7 @@
 #define __SWT_LOG_H__
 
 #include "Lock.h"
+#include "Types.h"
 #include <stdio.h>
 
 class CLog
@@ -15,7 +16,7 @@ public:
 	void InitParam(const char* loglevel, const char* pszName);
 	int  GetLogLevel();
 	void WriteLog(int nLevel, const char *format, ...);
-	void WriteWinHex(const char* pszFlag, const BYTE* pbyLogData, int nLogLen);
+	void WriteWinHex(const char* pszFlag, const Byte* pbyLogData, int nLogLen);
 
 private:
 	bool CreateLogFile();
