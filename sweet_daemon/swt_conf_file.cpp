@@ -17,14 +17,11 @@ CSwtConfFile::~ CSwtConfFile()
 bool CSwtConfFile::IintConfFile(char* conf_file)
 {
 	char szPath[260] = {0};
+	trim(szPath, conf_file);
 	
-	if (conf_file && conf_file)
+	if (strcmp(szPath, "") == 0)
 	{
-		strcpy(szPath, conf_file);
-	}
-	else
-	{
-		GetConfFile(szPath);
+		GetConfFile(szPath, 260);
 	}
 
 	printf("===%s===\n", szPath);
@@ -45,11 +42,11 @@ bool CSwtConfFile::Parse()
 	return true;
 }
 
-char* CSwtConfFile::GetConfFile(char* path) const
+char* CSwtConfFile::GetConfFile(char* path, u_int length) const
 {
 	char link[128] = {0};
     snprintf(link, 128, "/proc/%d/exe", getpid());
-    if(-1 == readlink(link, path, sizeof(path)))
+    if(-1 == readlink(link, path, length))
     {
     	strcpy(path, ".");
     }

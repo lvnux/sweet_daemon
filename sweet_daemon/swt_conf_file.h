@@ -36,7 +36,7 @@ public:
     bool Parse();
 
 private:
-    char* GetConfFile(char* path) const;
+    char* GetConfFile(char* path, u_int length) const;
 
 private:
     CCfgFromXml m_CfgFromXml;
