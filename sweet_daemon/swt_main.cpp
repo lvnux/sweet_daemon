@@ -1,6 +1,7 @@
 #include "swt_main.h"
 #include "swt_conf_file.h"
 
+extern swt_conf_s g_swt_conf;
 
 int main(int argc, char** argv)
 {
@@ -8,7 +9,13 @@ int main(int argc, char** argv)
 		return SWT_FAILURE;
 
 	CSwtConfFile swtConfFile;
-	swtConfFile.IintConfFile(swt_conf_file);
+	if (false == swtConfFile.IintConfFile(swt_conf_file))
+		return SWT_FAILURE;
+
+	if (false == swtConfFile.Parse())
+		return SWT_FAILURE;
+
+	printf("g_swt_conf: %s, %s, %d\n", g_swt_conf.sys.workmode.c_str(), g_swt_conf.redis.host.c_str(), g_swt_conf.redis.port);
 	
 	swt_save_argv(argc, argv);
 	swt_init_setproctitle();
@@ -67,11 +74,13 @@ static swt_int_t swt_get_options(int argc, char *const *argv)
             case '?':
             {
                 printf("Uage: %s [-hdv] [-s arg] arg \n", argv[0]);
+				option_start_work = 0;
                 break;
             }
             case ':':
             {
                 printf("absence param\n");
+				option_start_work = 0;
                 break;
             }
         }

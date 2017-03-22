@@ -8,10 +8,10 @@
     </sys>
 
     <!--终端服务配置-->
-    <redis_list>
-        <ip>127.0.0.1</ip><!--REDIS地址-->
+    <redis>
+        <host>127.0.0.1</host><!--REDIS地址-->
         <port>6379</port><!--REDIS端口-->
-        <dbindex>0</dbindex><!--REDIS DB号-->
-    </redis_list>
+        <index>0</index><!--REDIS DB号-->
+    </redis>
 </config>
 

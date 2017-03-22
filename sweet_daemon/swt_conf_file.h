@@ -19,8 +19,8 @@ typedef struct
 
 typedef struct 
 {
-    swt_sys_param* sys;
-    swt_redis_param* redis;
+    swt_sys_param sys;
+    swt_redis_param redis;
 }swt_conf_s;
 
 extern swt_conf_s g_swt_conf;
@@ -37,6 +37,9 @@ public:
 
 private:
     char* GetConfFile(char* path, u_int length) const;
+    
+    bool GetValue(const char* element_name, swt_sys_param& sys_param);
+    bool GetValue(const char* element_name, swt_redis_param& redis_param);
 
 private:
     CCfgFromXml m_CfgFromXml;

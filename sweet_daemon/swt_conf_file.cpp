@@ -39,6 +39,9 @@ bool CSwtConfFile::IintConfFile(char* conf_file)
 
 bool CSwtConfFile::Parse()
 {
+	GetValue("sys", g_swt_conf.sys);
+	GetValue("redis", g_swt_conf.redis);
+	
 	return true;
 }
 
@@ -59,5 +62,33 @@ char* CSwtConfFile::GetConfFile(char* path, u_int length) const
 	strcat(path, "/conf/confing.xml");
 
 	return path;
+}
+
+
+bool CSwtConfFile::GetValue(const char* element_name, swt_sys_param& sys_param)
+{
+	if(false == m_CfgFromXml.MoveRootElement() || false == m_CfgFromXml.MoveToElement(element_name))
+	{
+		return false;
+	}
+
+	m_CfgFromXml.GetTextValue("workmode", sys_param.workmode);
+	m_CfgFromXml.GetTextValue("log-level", sys_param.log_level);
+
+	return true;
+}
+
+bool CSwtConfFile::GetValue(const char* element_name, swt_redis_param& redis_param)
+{
+	if(false == m_CfgFromXml.MoveRootElement() || false == m_CfgFromXml.MoveToElement(element_name))
+	{
+		return false;
+	}
+
+	m_CfgFromXml.GetTextValue("host", redis_param.host);
+	m_CfgFromXml.GetTextValue("port", redis_param.port);
+	m_CfgFromXml.GetTextValue("index", redis_param.index);
+
+	return true;
 }
 
