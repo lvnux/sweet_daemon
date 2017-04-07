@@ -41,6 +41,7 @@ bool CSwtConfFile::Parse()
 {
 	GetValue("sys", g_swt_conf.sys);
 	GetValue("redis", g_swt_conf.redis);
+	GetValue("worker", g_swt_conf.worker);
 	
 	return true;
 }
@@ -88,6 +89,18 @@ bool CSwtConfFile::GetValue(const char* element_name, swt_redis_param& redis_par
 	m_CfgFromXml.GetTextValue("host", redis_param.host);
 	m_CfgFromXml.GetTextValue("port", redis_param.port);
 	m_CfgFromXml.GetTextValue("index", redis_param.index);
+
+	return true;
+}
+
+bool CSwtConfFile::GetValue(const char* element_name, swt_worker& worker)
+{
+	if(false == m_CfgFromXml.MoveRootElement() || false == m_CfgFromXml.MoveToElement(element_name))
+	{
+		return false;
+	}
+
+	m_CfgFromXml.GetTextValue("processes", worker.processes);
 
 	return true;
 }

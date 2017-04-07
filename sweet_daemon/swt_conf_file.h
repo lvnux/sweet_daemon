@@ -17,10 +17,16 @@ typedef struct
     uint16_t    index;
 }swt_redis_param;
 
+typedef struct
+{
+    uint32_t processes;    //工作进程个数
+}swt_worker;
+
 typedef struct 
 {
     swt_sys_param sys;
     swt_redis_param redis;
+    swt_worker worker;
 }swt_conf_s;
 
 extern swt_conf_s g_swt_conf;
@@ -40,6 +46,7 @@ private:
     
     bool GetValue(const char* element_name, swt_sys_param& sys_param);
     bool GetValue(const char* element_name, swt_redis_param& redis_param);
+    bool GetValue(const char* element_name, swt_worker& worker);
 
 private:
     CCfgFromXml m_CfgFromXml;

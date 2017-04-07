@@ -20,4 +20,8 @@
 typedef int swt_int_t;
 #endif
 
+#ifndef swt_uint_t
+typedef unsigned int swt_uint_t;
+#endif
+
 #endif    //__SWT_TYPE_H__

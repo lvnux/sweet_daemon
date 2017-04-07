@@ -10,12 +10,9 @@
 
 #define SWT_CONF_PATH "../conf/sweet.xml"
 
-
-static pid_t master_pid;
-
 static int option_show_help = 0;
 static int option_show_version = 0;
-static int option_start_work = 0;
+static int option_start_work = 1;        //默认启动工作
 
 static char      *swt_conf_file = "";
 
@@ -28,6 +25,5 @@ static swt_int_t swt_save_argv(int argc, char *const *argv);
 static swt_int_t swt_get_options(int argc, char *const *argv);
 static inline void swt_show_version();
 static inline void swt_show_help();
-static swt_int_t swt_daemon();
 
 #endif    //__SWT_MAIN_H__

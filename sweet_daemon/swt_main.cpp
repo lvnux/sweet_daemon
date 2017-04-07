@@ -1,7 +1,9 @@
 #include "swt_main.h"
 #include "swt_conf_file.h"
+#include "swt_daemon.h"
 
 extern swt_conf_s g_swt_conf;
+extern pid_t swt_pid;
 
 int main(int argc, char** argv)
 {
@@ -15,12 +17,13 @@ int main(int argc, char** argv)
 	if (false == swtConfFile.Parse())
 		return SWT_FAILURE;
 
-	printf("g_swt_conf: %s, %s, %d\n", g_swt_conf.sys.workmode.c_str(), g_swt_conf.redis.host.c_str(), g_swt_conf.redis.port);
+	printf("g_swt_conf: %s, %s, %d, %d\n", 
+		g_swt_conf.sys.workmode.c_str(), g_swt_conf.redis.host.c_str(), g_swt_conf.redis.port, g_swt_conf.worker.processes);
 	
 	swt_save_argv(argc, argv);
 	swt_init_setproctitle();
 	
-	master_pid = getpid();
+	swt_pid = getpid();
 
 	if (option_show_help)
 	{
@@ -34,8 +37,9 @@ int main(int argc, char** argv)
 
 	if (option_start_work)
 	{
+		swt_init_signals();
     	swt_daemon();
-		start_process();
+		swt_master_process();
 	}
 	
     return 0;
@@ -52,11 +56,13 @@ static swt_int_t swt_get_options(int argc, char *const *argv)
         	case 'h':
 			{
 				option_show_help = 1;
+				option_start_work = 0;
 				break;
 			}
             case 'v':
             {
                 option_show_version = 1;
+				option_start_work = 0;
                 break;
             }
             case 's':
@@ -68,7 +74,6 @@ static swt_int_t swt_get_options(int argc, char *const *argv)
             {
                 printf("param is: %s\n", optarg);
 				swt_conf_file = optarg;
-				option_start_work = 1;
                 break;
             }
             case '?':
@@ -138,64 +143,6 @@ static int swt_save_argv(int argc, char *const *argv)
     }
 
     swt_argv[i] = NULL;
-
-    return SWT_SUCCESS;
-}
-
-
-static swt_int_t swt_daemon()
-{
-    switch (fork()) {
-    case -1:
-        printf("fork() failed\n");
-        return SWT_FAILURE;
-
-    case 0:
-        break;
-
-    default:
-        exit(0);
-    }
-
-    master_pid = getpid();
-
-    if (setsid() == -1) {
-        printf("setsid() failed\n");
-        return SWT_FAILURE;
-    }
-
-    umask(0);
-
-	int fd;
-    fd = open("/dev/null", O_RDWR);
-    if (fd == -1) {
-        printf("open(\"/dev/null\") failed\n");
-        return SWT_FAILURE;
-    }
-
-    if (dup2(fd, STDIN_FILENO) == -1) {
-        printf("dup2(STDIN) failed\n");
-        return SWT_FAILURE;
-    }
-
-    if (dup2(fd, STDOUT_FILENO) == -1) {
-        printf("dup2(STDOUT) failed\n");
-        return SWT_FAILURE;
-    }
-
-#if 0
-    if (dup2(fd, STDERR_FILENO) == -1) {
-        printf("dup2(STDERR) failed\n");
-        return SWT_FAILURE;
-    }
-#endif
-
-    if (fd > STDERR_FILENO) {
-        if (close(fd) == -1) {
-            printf("close() failed\n");
-            return SWT_FAILURE;
-        }
-    }
 
     return SWT_SUCCESS;
 }

@@ -13,5 +13,10 @@
         <port>6379</port><!--REDIS端口-->
         <index>0</index><!--REDIS DB号-->
     </redis>
+    
+    <!--工作线程-->
+    <worker>
+        <processes>5</processes><!--工作进程个数-->
+    </worker>
 </config>
 
