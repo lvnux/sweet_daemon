@@ -50,6 +50,7 @@ private:
 
 private:
     CCfgFromXml m_CfgFromXml;
+    char m_szCfgPath[260];
 };
 
 

@@ -3,6 +3,7 @@
 #include <libgen.h>
 
 swt_conf_s g_swt_conf;
+CSwtConfFile g_swtConfFile;
 
 CSwtConfFile::CSwtConfFile()
 {
@@ -16,29 +17,28 @@ CSwtConfFile::~ CSwtConfFile()
 
 bool CSwtConfFile::IintConfFile(char* conf_file)
 {
-	char szPath[260] = {0};
-	trim(szPath, conf_file);
+	trim(m_szCfgPath, conf_file);
 	
-	if (strcmp(szPath, "") == 0)
+	if (strcmp(m_szCfgPath, "") == 0)
 	{
-		GetConfFile(szPath, 260);
+		GetConfFile(m_szCfgPath, 260);
 	}
 
-	printf("===%s===\n", szPath);
+	printf("===%s===\n", m_szCfgPath);
 	
-	if (!check_file_exists(szPath))
+	if (!check_file_exists(m_szCfgPath))
 	{
-		printf("file: %s does not exist\n", szPath);
+		printf("file: %s does not exist\n", m_szCfgPath);
 		return false;
 	}
-
-	m_CfgFromXml.LoadXml(szPath);
 	
-	return true;
+	return Parse();
 }
 
 bool CSwtConfFile::Parse()
 {
+	m_CfgFromXml.LoadXml(m_szCfgPath);
+	
 	GetValue("sys", g_swt_conf.sys);
 	GetValue("redis", g_swt_conf.redis);
 	GetValue("worker", g_swt_conf.worker);

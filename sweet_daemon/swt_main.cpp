@@ -4,17 +4,14 @@
 
 extern swt_conf_s g_swt_conf;
 extern pid_t swt_pid;
+extern CSwtConfFile g_swtConfFile;
 
 int main(int argc, char** argv)
 {
 	if (SWT_SUCCESS != swt_get_options(argc, argv))
 		return SWT_FAILURE;
 
-	CSwtConfFile swtConfFile;
-	if (false == swtConfFile.IintConfFile(swt_conf_file))
-		return SWT_FAILURE;
-
-	if (false == swtConfFile.Parse())
+	if (false == g_swtConfFile.IintConfFile(swt_conf_file))
 		return SWT_FAILURE;
 
 	printf("g_swt_conf: %s, %s, %d, %d\n", 

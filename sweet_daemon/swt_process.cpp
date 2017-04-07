@@ -7,6 +7,7 @@
 #include <sys/wait.h>
 
 extern swt_conf_s g_swt_conf;
+extern CSwtConfFile g_swtConfFile;
 
 pid_t swt_pid;
 
@@ -14,10 +15,12 @@ sig_atomic_t  swt_reap;
 sig_atomic_t  swt_terminate;   //TERM信号
 sig_atomic_t  swt_quit;   //QUIT信号
 swt_uint_t    swt_exiting; //ngx_exiting标志位仅由ngx_worker_process_cycle方法在退出时作为标志位使用
-sig_atomic_t  swt_reconfigure;
+sig_atomic_t  swt_reconfigure;  //HUP信号
 
 swt_process_t swt_processes[1024];    //用于存储子进程信息
 uint32_t swt_last_process;  //子进程个数
+
+static const char* szfilename = "swt_test_sub.txt";
 
 swt_signal_t  signals[] = {
     {SIGHUP, ngx_signal_handler},
@@ -54,8 +57,7 @@ void swt_master_process()
 	sigemptyset(&set);
 
 	swt_setproctitle(master_process);
-
-	swt_last_process = g_swt_conf.worker.processes;
+	
 	swt_start_worker_processes();
 
 	for ( ;; )
@@ -64,12 +66,25 @@ void swt_master_process()
 		if (swt_terminate)
 		{
 			swt_stop_worker_process();
+
+			if (check_file_exists((char*)szfilename))
+			{
+				remove(szfilename);
+			}
+			
 			exit(0);
 		}
 		
 		if (swt_reap)
 		{
 			swt_reap_children();
+		}
+
+		if (swt_reconfigure)
+		{
+			swt_stop_worker_process();
+			g_swtConfFile.Parse();
+			swt_start_worker_processes();
 		}
 
 		sleep(1);
@@ -80,6 +95,9 @@ void swt_master_process()
 void swt_start_worker_processes()
 {
 	pid_t pid;
+	
+	swt_last_process = g_swt_conf.worker.processes;
+	
 	for (uint32_t i = 0; i < swt_last_process; i++)
 	{
 		pid = swt_start_one_worker_process();
@@ -99,7 +117,7 @@ pid_t swt_start_one_worker_process()
 			break;
 		case 0:
 			swt_pid = getpid();
-			start_work("swt_test_sub.txt", (long)swt_pid);
+			start_work(szfilename, (long)swt_pid);
 			break;
 		default:
 			break;
@@ -219,6 +237,7 @@ void ngx_signal_handler(int signo)
 	{
 		case SIGHUP:
 		{
+			swt_reconfigure = 1;
 			break;
 		}
 		case SIGQUIT:
