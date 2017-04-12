@@ -77,11 +77,13 @@ void swt_master_process()
 		
 		if (swt_reap)
 		{
+			swt_reap = 0;
 			swt_reap_children();
 		}
 
 		if (swt_reconfigure)
 		{
+			swt_reconfigure = 0;
 			swt_stop_worker_process();
 			g_swtConfFile.Parse();
 			swt_start_worker_processes();
